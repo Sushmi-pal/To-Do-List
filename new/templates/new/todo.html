@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+
+    <style>
+        textarea{
+
+
+            margin: 10px auto;
+            border: 2px solid black;
+        }
+        .car{
+            position: absolute;
+            margin: 0 auto;
+            left:200px;
+            top:50px;
+        }
+
+        #result{
+            padding-top: 30px;
+        }
+        .deletee{
+            margin: 0 auto;
+            display: block;
+
+        }
+        .update{
+            margin: 0 auto;
+            display: block;
+
+        }
+        button, .color{
+            background-color: #358597;
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+</head>
+<body>
+<h1 style="text-align: center;">To Do List</h1>
+<form id="addPostForm">
+    <div>
+      <textarea type="text" id="title" placeholder="Your list item" style="margin: 10px 0px; width: 1200px; height: 29px;"></textarea>
+
+    <input  class ="color " type="submit" value="Submit" id="formDataPost" style="margin-left:600px; height: 30px; width: 80px; border-radius: 25px;"></div>
+</form>
+<button id="abc" style="margin: 20px auto; height: 40px; width: 120px; border-radius: 25px;" onclick=aaa()>My ToDO List</button>
+<div id="result">
+
+  </div>
+
+<script>
+
+        addPostForm=document.getElementById('addPostForm')
+        listt=document.getElementById('title')
+        addPostForm.addEventListener('submit',function (e){
+            e.preventDefault()
+            aaa();
+            const myPost = {
+        message: listt.value,
+
+    }
+        listt.value=``
+    ;
+    fetch('http://127.0.0.1:8000/', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(myPost)
+    })
+        .then((res) => res.json())
+        .then((data) => console.log(data))
+         aaa();
+})
+
+    function aaa(){
+
+        fetch('http://127.0.0.1:8000/').then(res=>res.json()).then(data=>{
+            let op=`<div id="rr">`
+            data.forEach(function (data){
+                console.log(data)
+                op+=`<div class="fontawesome" style="height:80px; " > `
+                op+=`<textarea id=${data['id']} class="hello" style="margin:  0px; width: 1200px; height: 29px;" > ${data['message']} `
+                op+=`</textarea>`
+                op+=`<button id="${data['id']}" onclick=deletee(id) class="fa fa-trash-o fa-5x deletee" style="font-size:20px; position: absolute; margin: 0 auto; left:1140px;"></button>`
+                op+=`<button id="${data['id']}"class="fa fa-edit update" onclick=update(id) style="font-size:20px; position: absolute; margin: 0 auto; left:1180px;"></button>`
+                op+=`</div>`
+//op+=`<button id="${data['id']}" onclick=deletee(id) class="fa fa-trash-o fa-5x deletee" style="font-size:20px; position: absolute; margin: 0 auto; left:740px;"></button>`
+
+            })
+            op+=`</div>`
+
+        result=document.getElementById('result')
+        result.innerHTML=op
+        }
+    )
+
+    }
+    function deletee(id){
+            aaa();
+             fetch('http://127.0.0.1:8000//delete/'+id,{method:'DELETE',id:id}).then(()=>console.log('removed')).
+             catch(err=>console.log(err));
+             setTimeout(aaa(),5)
+    }
+
+    function update(id){
+        console.log(id)
+
+            let hello=document.getElementById(id).value
+            console.log(hello)
+
+
+
+
+
+
+        fetch('http://127.0.0.1:8000//update/'+id, {
+         method: 'PUT',
+         headers: {
+          'Content-type': 'application/json; charset=UTF-8'
+         },
+         body: JSON.stringify({"message":hello}),
+
+        }).then(()=>console.log('updated')).catch(err=>console.log(err))
+
+
+            }
+</script>
+</body>
+</html>
